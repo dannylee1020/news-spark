@@ -1,2 +1,6 @@
 .env
 api_credentials.json
+files/*
+!files/.gitkeep
+*.pyc
+*.DS_Store
