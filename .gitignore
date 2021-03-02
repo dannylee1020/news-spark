@@ -1,6 +1,10 @@
 .env
 api_credentials.json
-files/*
-!files/.gitkeep
+raw_data/news/*
+raw_data/price/*
+!raw_data/news/.gitkeep
+!raw_data/price/.gitkeep
+processed_data/*
+!processed_data/.gitkeep
 *.pyc
 *.DS_Store
