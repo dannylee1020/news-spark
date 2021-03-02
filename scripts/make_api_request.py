@@ -1,4 +1,4 @@
-from api import News_API, write_json_file, Coinbase_API
+from api import News_API, write_json_file, Coinbase_API, write_csv_file
 import config
 from dotenv import load_dotenv
 import os
@@ -51,12 +51,13 @@ news_path = f"{config.PROJECT_HOME}/raw_data/news/"
 price_path = f"{config.PROJECT_HOME}/raw_data/price/"
 eth_news = 'eth_news.json'
 btc_news = 'btc_news.json'
-eth_price = 'eth_price'
-btc_price = 'btc_price'
+eth_price = 'eth_price.csv'
+btc_price = 'btc_price.csv'
 
 
 if __name__ == '__main__':
     write_json_file(path = news_path, data = eth_news_data, filename = eth_news)
     write_json_file(path = news_path, data = btc_news_data, filename = btc_news)
-    write_json_file(path = price_path, data = eth_price_data, filename = eth_price)
-    write_json_file(path = price_path, data = btc_price_data, filename = btc_price)
+    write_csv_file(path = price_path, data = eth_price_data, filename = eth_price)
+    write_csv_file(path = price_path, data = btc_price_data, filename = btc_price)
+
