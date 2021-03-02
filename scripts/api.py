@@ -89,3 +89,9 @@ def write_json_file(path, data, filename):
         json.dump(data, f)
 
 
+
+def write_csv_file(path, filename, data):
+    with open(path+filename, 'w') as f:
+        for line in data:
+            f.write(f"{str(line).lstrip('[').rstrip(']')}\n")
+
