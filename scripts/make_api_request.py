@@ -1,49 +1,60 @@
 from api import News_API, write_json_file, Coinbase_API, write_csv_file
-import config
 from dotenv import load_dotenv
-import os
+import os, json, config
 from datetime import datetime, timedelta
+
 
 
 news_api = News_API(config.NEWS_API_KEY)
 cb_api = Coinbase_API(config.CB_API_KEY, config.CB_API_SECRET, config.CB_PW)
 
-# dynamically set date
-start_date= (datetime.now() - timedelta(days = 27)).strftime('%Y-%m-%d')
-end_date = datetime.now().strftime('%Y-%m-%d')
-
-# News data
-eth_query = {
-    'q':'ethereum',
-    'from':start_date,
-    'to': end_date
-}
-
-btc_query = {
-    'q':'bitcoin',
-    'from':start_date,
-    'to': end_date
-}
-
-eth_news_data = news_api.get_everything(query=eth_query)
-btc_news_data = news_api.get_everything(query = btc_query)
+def create_query_param(news:bool, product, start_date, end_date, granularity='86400'):
+    if news == True:
+        query = {
+            'q':product,
+            'from':start_date,
+            'to':end_date
+        }
+    else:
+        query = {
+            'start':start_date,
+            'end':end_date,
+            'granularity':granularity
+        }
+    
+    return query
 
 
-# price data
-btc_q = {
-    'start':start_date,
-    'end' : end_date,
-    'granularity':'86400'
-}
+def make_api_request(api, product=None, product_id = None):
+    if 'news' in str(type(api)).lower():
+        query = create_query_param(True, product, config.START_DATE, config.END_DATE)
+        data = api.get_everything(query = query)
+    else:
+        query = create_query_param(False, product_id, config.START_DATE, config.END_DATE)
+        data = api.get_historical_price(product_id = product_id, query = query)
+    
+    return data
 
-eth_q = {
-    'start':start_date,
-    'end' : end_date,
-    'granularity':'86400'
-}
 
-btc_price_data = cb_api.get_historical_price(product_id = 'BTC-USD', query = btc_q)
-eth_price_data = cb_api.get_historical_price(product_id = 'ETH-USD', query = eth_q)
+def write_json_file(path, data, filename):
+    with open(path+filename, 'w', encoding='utf-8') as f:
+        json.dump(data, f)
+
+
+
+def write_csv_file(path, filename, data):
+    with open(path+filename, 'w') as f:
+        for line in data:
+            f.write(f"{str(line).lstrip('[').rstrip(']')}\n")
+
+
+
+# make requests
+eth_news_data = make_api_request(news_api, product='ethereum')
+btc_news_data = make_api_request(news_api, product = 'bitcoin')
+
+eth_price_data = make_api_request(cb_api, product_id = 'ETH-USD')
+btc_price_data = make_api_request(cb_api, product_id = 'BTC-USD')
 
 
 # write to files
@@ -60,4 +71,3 @@ if __name__ == '__main__':
     write_json_file(path = news_path, data = btc_news_data, filename = btc_news)
     write_csv_file(path = price_path, data = eth_price_data, filename = eth_price)
     write_csv_file(path = price_path, data = btc_price_data, filename = btc_price)
-
