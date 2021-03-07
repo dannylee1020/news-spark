@@ -46,8 +46,6 @@ class Coinbase_API(CoinbaseExchangeAuth):
         return r.json()
 
 
-
-
 class News_API(object):
     api_key = None
 
@@ -62,9 +60,7 @@ class News_API(object):
     
     def get_everything(self, query = None, query_title = None, start_date = None, end_date = None, sort_by = None):
         endpoint = 'https://newsapi.org/v2/everything'
-
         if isinstance(query, dict):
-            # query = ' '.join([f"{k}:{v}" for k,v in query.items()])
             query_param = urlencode(query)
         else:
             query_param = urlencode({'q':query, 'qInTitle': query_title,'from':start_date, 'to':end_date, 'sortBy':sort_by})
@@ -83,15 +79,4 @@ class News_API(object):
         return r.json()
 
 
-
-def write_json_file(path, data, filename):
-    with open(path+filename, 'w', encoding='utf-8') as f:
-        json.dump(data, f)
-
-
-
-def write_csv_file(path, filename, data):
-    with open(path+filename, 'w') as f:
-        for line in data:
-            f.write(f"{str(line).lstrip('[').rstrip(']')}\n")
 
