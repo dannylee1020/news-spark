@@ -9,7 +9,7 @@ PROJECT_HOME = os.getenv('PROJECT_HOME')
 CB_API_KEY = os.getenv('CB_API_KEY')
 CB_API_SECRET = os.getenv('CB_API_SECRET')
 CB_PW = os.getenv('CB_PW')
-SPARK_HOME = os.getenv('SPARK_HOME')
+LOCALHOST = os.getenv('IP_ADDRESS')
 
 # dynamically set date for api calls
 START_DATE= (datetime.now() - timedelta(days = 27)).strftime('%Y-%m-%d')
