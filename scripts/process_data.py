@@ -4,14 +4,15 @@ from pyspark.sql.types import StructType, StructField, StringType, LongType, Flo
 import config
 import os
 
-
-
-spark = SparkSession.builder.master('local[*]').getOrCreate()
+master = f"spark://{config.LOCALHOST}:7077"
+spark = SparkSession.builder.master(master).getOrCreate() 
 spark.conf.set('spark.sql.shuffle.partitions', 5)
 
+
 # setting extraClassPath doesn't work in client mode.  
-# .config('spark.driver.extraClassPath', f"{config.SPARK_HOME}/jars/postgresql-42.2.18.jar")\
-# .config('spark.jars', f"{config.SPARK_HOME}/jars/postgresql-42.2.18.jar")\
+# spark = SparkSession.builder.master(master)\
+#     .config('spark.driver.extraClassPath', f"{config.SPARK_HOME}/jars/postgresql-42.2.18.jar")\
+#     .getOrCreate()
 
 
 # define schema for price data
@@ -76,7 +77,6 @@ properties = {
 if __name__ == '__main__':
     btc_df.write.jdbc(url=jdbc_url, table = 'btc_price', mode = 'append', properties = properties)
     eth_df.write.jdbc(url = jdbc_url, table = 'eth_price', mode = 'append', properties = properties)
-
     flattened_btc_news.write.jdbc(url = jdbc_url, table = 'btc_news', mode = 'append', properties = properties)
     flattened_eth_news.write.jdbc(url = jdbc_url, table = 'eth_news', mode = 'append', properties = properties)
 
