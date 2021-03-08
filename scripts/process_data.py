@@ -5,14 +5,16 @@ import config
 import os
 
 master = f"spark://{config.LOCALHOST}:7077"
-spark = SparkSession.builder.master(master).getOrCreate() 
-spark.conf.set('spark.sql.shuffle.partitions', 5)
+spark = SparkSession.builder.master(master).getOrCreate()
 
 
-# setting extraClassPath doesn't work in client mode.  
+# #control resources for running the applications here if needed
 # spark = SparkSession.builder.master(master)\
-#     .config('spark.driver.extraClassPath', f"{config.SPARK_HOME}/jars/postgresql-42.2.18.jar")\
-#     .getOrCreate()
+#     .config('spark.sql.shuffle.partitions','5')\
+#     .config('spark.executor.memory','5g')\
+#     .config('spark.executor.cores', '3')\
+#     .config('spark.executor.instances', '3')\
+#     .getOrCreate() 
 
 
 # define schema for price data
