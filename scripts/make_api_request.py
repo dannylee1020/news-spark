@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 import os, json, config
 from datetime import datetime, timedelta
 
-
-
 news_api = News_API(config.NEWS_API_KEY)
 cb_api = Coinbase_API(config.CB_API_KEY, config.CB_API_SECRET, config.CB_PW)
 
