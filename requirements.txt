@@ -1,3 +1,5 @@
 python-dotenv
 requests
 pyspark
+pandas
+psycopg2
