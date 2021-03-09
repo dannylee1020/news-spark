@@ -9,6 +9,9 @@ PROJECT_HOME = os.getenv('PROJECT_HOME')
 CB_API_KEY = os.getenv('CB_API_KEY')
 CB_API_SECRET = os.getenv('CB_API_SECRET')
 CB_PW = os.getenv('CB_PW')
+FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
+FINNHUB_SANDBOX = os.getenv('FINNHUB_SANDBOX')
+CRYPTOPANIC_API_KEY = os.getenv('CRYPTOPANIC_API_KEY')
 LOCALHOST = os.getenv('IP_ADDRESS')
 
 # dynamically set date for api calls
