@@ -101,19 +101,25 @@ eth_df = eth_price_df.withColumn('date', to_date(to_timestamp(col('time')), 'yyy
 btc_price = dataframe_upsertion('btc_price', jdbc_url, btc_df)
 eth_price = dataframe_upsertion('eth_price', jdbc_url, eth_df)
 btc_news = dataframe_upsertion('btc_news', jdbc_url, flattened_btc_news)
-eth_news = dataframe_upsertion('eth_news', jdbc_url, flattened_eth_news)
+eth_news = dataframe_upsertion('eth_news', jdbc_url, flattened_eth_news)    
 
 
 
 if __name__ == '__main__':
-    btc_price.write.jdbc(url=jdbc_url, table = 'btc_price', mode = 'overwrite', properties = properties)
-    eth_price.write.jdbc(url = jdbc_url, table = 'eth_price', mode = 'overwrite', properties = properties)
-    btc_news.write.jdbc(url = jdbc_url, table = 'btc_news', mode = 'overwrite', properties = properties)
-    eth_news.write.jdbc(url = jdbc_url, table = 'eth_news', mode = 'overwrite', properties = properties)
+
+    iter_dict = {
+        'btc_price':btc_price,
+        'eth_price':eth_price,
+        'btc_news':btc_news,
+        'eth_news':eth_news
+    }
+
+    for k,v in iter_dict.items():
+        v.write.jdbc(url=jdbc_url, table=k, mode = 'overwrite', properties=properties)
 
 
 
-    # spark-submit --driver-class-path /Users/dhyungseoklee/Projects/spark/spark-3.0.1-bin-hadoop2.7/jars/postgresql-42.2.18.jar process_data.py
+    # # spark-submit --driver-class-path /Users/dhyungseoklee/Projects/spark/spark-3.0.1-bin-hadoop2.7/jars/postgresql-42.2.18.jar process_data.py
 
 
     
