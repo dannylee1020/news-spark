@@ -47,7 +47,6 @@ class Coinbase_API(CoinbaseExchangeAuth):
 
 
 class News_API(object):
-    api_key = None
 
     def __init__(self, api_key):
         self.api_key = api_key
@@ -80,3 +79,45 @@ class News_API(object):
 
 
 
+
+class Finnhub_API(object):
+    def __init__(self, api_key):
+        self.api_key = api_key
+    
+
+    def get_header(self):
+        header = {
+            'X-Finnhub-Token': self.api_key
+        }
+
+        return header
+
+    def get_company_news(self, symbol, start_date=None, end_date=None):
+        endpoint = 'https://finnhub.io/api/v1'
+        query_param = urlencode({'symbol':symbol, 'from':start_date, 'to':end_date})
+        lookup_url = f"{endpoint}?{query_param}"
+        r = requests,get(lookup_url, headers = self.get_header())
+
+        return r.json()
+
+    def get_sec_filings(self, symbol=None, cik=None, accessNumber=None, form=None, start_date=None, end_date=None):
+        endpoint = 'https://finnhub.io/api/v1'
+        query_param = urlencode({
+            'symbol':symbol,
+            'cik':cik,
+            'accessNumber':accessNumber,
+            'form':form,
+            'start_date':start_date,
+            'end_date':end_date
+        })
+        lookup_url = f"{endpoint}?{lookup_url}"
+        r = requests.get(lookup_url, headers = self.get_header())
+
+        return r.json()
+        
+
+    
+
+
+    
+    
