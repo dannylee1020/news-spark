@@ -12,6 +12,7 @@ CB_PW = os.getenv('CB_PW')
 FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
 FINNHUB_SANDBOX = os.getenv('FINNHUB_SANDBOX')
 CRYPTOPANIC_API_KEY = os.getenv('CRYPTOPANIC_API_KEY')
+AZURE_SUBSCRIPTION_KEY = os.getenv('AZURE_SUBSCRIPTION_KEY')
 LOCALHOST = os.getenv('IP_ADDRESS')
 
 # dynamically set date for api calls
