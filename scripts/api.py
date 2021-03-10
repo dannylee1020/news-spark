@@ -23,7 +23,7 @@ class CoinbaseExchangeAuth(AuthBase):
             'CB-ACCESS-KEY': self.api_key,
             'CB-ACCESS-PASSPHRASE': self.passphrase,
             'Content-Type': 'application/json'
-        })
+        })  
         return request
 
 
@@ -78,6 +78,35 @@ class News_API(object):
         return r.json()
 
 
+class Bing_API(object):
+    def __init__(self, api_key):
+        self.api_key = api_key
+
+    def get_headers(self):
+        header = {
+            'Ocp-Apim-Subscription-Key': self.api_key
+        }
+
+        return header
+
+    def search_news(self, query, market= None, category=None, freshness= None):
+        endpoint = 'https://api.bing.microsoft.com/v7.0/news/search'
+        query_param = urlencode({
+            'q':query,
+            'mkt':market,
+            'freshness':freshness
+        })
+
+        lookup_url = f"{endpoint}?{query_param}"
+        r = requests.get(lookup_url, headers = self.get_headers())
+
+        return r.json()
+        # return lookup_url
+
+
+# market='en-US',
+# freshness='Week'
+
 
 
 class Finnhub_API(object):
@@ -116,8 +145,3 @@ class Finnhub_API(object):
         return r.json()
         
 
-    
-
-
-    
-    
