@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, explode, to_timestamp, to_date
+from pyspark.sql.functions import col, explode, to_timestamp, to_date, desc
 from pyspark.sql.types import StructType, StructField, StringType, LongType, FloatType, ArrayType
 import config, os, psycopg2
 import pandas as pd
@@ -12,7 +12,7 @@ spark = SparkSession.builder.master(master).getOrCreate()
 jdbc_url = 'jdbc:postgresql://localhost/news_spark'
 properties = {
     'user':'dhyungseoklee', 
-    'driver':'org.postgresql.Driver'    
+    'driver':'org.postgresql.Driver'
 }
 
 # #control resources for running the applications here if needed
@@ -46,15 +46,12 @@ def db_table_exists(tablename):
     return result
 
 
-def dataframe_upsertion(tablename, url, new_data):
-    if db_table_exists(tablename):
-        df_from_db = spark.read.jdbc(url=url, table=tablename, properties=properties)
-        new_df = df_from_db.union(new_data)
-        upserted_df = new_df.drop_duplicates()
-    else:
-        upserted_df = new_data
-    
-    return upserted_df
+
+def perform_upsertion(url, table, properties):
+    staging_table = "stg_"+table
+    staging_data = spark.read.jdbc(url = url, table = staging_table, properties=properties)
+    staging_data = staging_data.drop_duplicates()
+    staging_data.write.jdbc(url=url, table=table, mode='overwrite', properties=properties)
 
 
 
@@ -97,26 +94,25 @@ eth_df = eth_price_df.withColumn('date', to_date(to_timestamp(col('time')), 'yyy
 
 
 
-# perform manual upsertion on DF
-btc_price = dataframe_upsertion('btc_price', jdbc_url, btc_df)
-eth_price = dataframe_upsertion('eth_price', jdbc_url, eth_df)
-btc_news = dataframe_upsertion('btc_news', jdbc_url, flattened_btc_news)
-eth_news = dataframe_upsertion('eth_news', jdbc_url, flattened_eth_news)    
+# load data to staging table
+staging_data = {
+    'stg_btc_price':btc_df,
+    'stg_eth_price':eth_df,
+    'stg_btc_news':flattened_btc_news,
+    'stg_eth_news':flattened_eth_news
+}
+
+for k,v in staging_data.items():
+    v.write.jdbc(url=jdbc_url, mode='append', table=k, properties=properties)
 
 
 
 if __name__ == '__main__':
-
-    iter_dict = {
-        'btc_price':btc_price,
-        'eth_price':eth_price,
-        'btc_news':btc_news,
-        'eth_news':eth_news
-    }
-
-    for k,v in iter_dict.items():
-        v.write.jdbc(url=jdbc_url, table=k, mode = 'overwrite', properties=properties)
-
+    # load to prod table
+    production_table = ['btc_price','eth_price','btc_news','eth_news']
+    for name in production_table:
+        perform_upsertion(jdbc_url, name, properties)
+    
 
 
     # # spark-submit --driver-class-path /Users/dhyungseoklee/Projects/spark/spark-3.0.1-bin-hadoop2.7/jars/postgresql-42.2.18.jar process_data.py
