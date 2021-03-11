@@ -2,7 +2,7 @@ import json, requests, hmac, hashlib, time, base64
 from urllib.parse import urlencode
 from requests.auth import AuthBase
 from dotenv import load_dotenv
-import os
+import os, config
 
 class CoinbaseExchangeAuth(AuthBase):
     def __init__(self, api_key, secret_key, passphrase):
@@ -78,6 +78,7 @@ class News_API(object):
         return r.json()
 
 
+
 class Bing_API(object):
     def __init__(self, api_key):
         self.api_key = api_key
@@ -89,7 +90,7 @@ class Bing_API(object):
 
         return header
 
-    def search_news(self, query, market= None, category=None, freshness= None):
+    def search_news(self, query, market= 'en-US', category=None, freshness= 'Week'):
         endpoint = 'https://api.bing.microsoft.com/v7.0/news/search'
         query_param = urlencode({
             'q':query,
@@ -101,11 +102,6 @@ class Bing_API(object):
         r = requests.get(lookup_url, headers = self.get_headers())
 
         return r.json()
-        # return lookup_url
-
-
-# market='en-US',
-# freshness='Week'
 
 
 
@@ -121,11 +117,11 @@ class Finnhub_API(object):
 
         return header
 
-    def get_company_news(self, symbol, start_date=None, end_date=None):
-        endpoint = 'https://finnhub.io/api/v1'
+    def get_company_news(self, symbol, start_date, end_date):
+        endpoint = 'https://finnhub.io/api/v1/company-news'
         query_param = urlencode({'symbol':symbol, 'from':start_date, 'to':end_date})
         lookup_url = f"{endpoint}?{query_param}"
-        r = requests,get(lookup_url, headers = self.get_header())
+        r = requests.get(lookup_url, headers = self.get_header())
 
         return r.json()
 
