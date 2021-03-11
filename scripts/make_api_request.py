@@ -1,4 +1,4 @@
-from api import News_API, write_json_file, Coinbase_API, write_csv_file
+from api import News_API, Coinbase_API
 from dotenv import load_dotenv
 import os, json, config
 from datetime import datetime, timedelta
@@ -6,10 +6,10 @@ from datetime import datetime, timedelta
 news_api = News_API(config.NEWS_API_KEY)
 cb_api = Coinbase_API(config.CB_API_KEY, config.CB_API_SECRET, config.CB_PW)
 
-def create_query_param(news:bool, product, start_date, end_date, granularity='86400'):
+def create_query_param(news:bool, product, start_date=config.START_DATE, end_date=config.END_DATE, granularity='86400'):
     if news == True:
         query = {
-            'q':product,
+            'qInTitle':product,
             'from':start_date,
             'to':end_date
         }
@@ -25,10 +25,10 @@ def create_query_param(news:bool, product, start_date, end_date, granularity='86
 
 def make_api_request(api, product=None, product_id = None):
     if 'news' in str(type(api)).lower():
-        query = create_query_param(True, product, config.START_DATE, config.END_DATE)
+        query = create_query_param(True, product)
         data = api.get_everything(query = query)
     else:
-        query = create_query_param(False, product_id, config.START_DATE, config.END_DATE)
+        query = create_query_param(False, product_id)
         data = api.get_historical_price(product_id = product_id, query = query)
     
     return data
